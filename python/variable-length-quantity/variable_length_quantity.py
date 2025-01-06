@@ -4,18 +4,29 @@ UPPER_LIM = 0x7F
 
 
 def encode(numbers: List[bytes]) -> List[bytes]:
-    results = []
+    ret = []
     for number in numbers:
-        result = 0
-        result = (result << number) | (number & UPPER_LIM)
-        results.append(result)
-
-    return results
-
+        collect = [number & 0x7F]
+        number >>= 7
+        while number:
+            collect.append(0x80 + (number & 0x7F))
+            number >>= 7
+        ret += collect[::-1]
+    return ret
 
 def decode(bytes_):
-    pass
+    numbers = []
+    collect = 0
+    byte = None
+    for byte in bytes_:
+        if byte & 0x80:
+            collect += byte & 0x7F
+            collect <<= 7
+        else:
+            collect += byte
+            numbers.append(collect)
+            collect = 0
+    if byte & 0x80:
+        raise ValueError("incomplete sequence")
+    return numbers
 
-
-if __name__ == "__main__":
-    print(encode([0x2000]))

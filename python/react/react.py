@@ -1,121 +1,45 @@
-from typing import List
-import operator
-from collections import deque
-from functools import partial
-
-OPERATOR_STACK = {
-    "-": operator.sub,
-    "+": operator.add,
-    "/": operator.floordiv,
-    "*": operator.mul,
-}
-
-global_cache = set()
-
-
 class InputCell:
     def __init__(self, initial_value):
-        self.value = initial_value
-        self.mem_id = id(self)
-        self.operand_stack = deque([])
-        self.callbacks = []
+        self._value = initial_value
+        self._callbacks = []
 
-    def __add__(self, other):
-        if isinstance(other, InputCell):
-            return self.value + other.value
-        elif isinstance(other, (int, float)):
-            return self.value + other
+    @property
+    def value(self):
+        return self._value
 
-    def __radd__(self, other):
-        return self.__add__(other)
+    @value.setter
+    def value(self, value):
+        self._value = value
+        for c in self._callbacks:
+            c(value)
 
-    def __mul__(self, other):
-        if isinstance(other, InputCell):
-            return self.value * other.value
-        elif isinstance(other, (int, float)):
-            return self.value * other
-
-    def __rmul__(self, other):
-        return self.__mul__(other)
-
-    def __setattr__(self, name, value):
-        if name == "value":
-            if hasattr(self, name):
-                global_cache.add(id(self))
-            if hasattr(self, "callbacks"):
-                for callback in self.callbacks:
-                    callback(value)
-        super().__setattr__(name, value)
+    def add_callback(self, callback):
+        self._callbacks.append(callback)
 
 
 class ComputeCell:
-    def __init__(self, inputs: List[InputCell], compute_functions):
-        self.value = compute_functions(inputs)
-        self.inputs = inputs
-        self.compute_functions = compute_functions
-        self.mem_cache = {id(sources) for sources in inputs}
-        self.callbacks = []
+    def __init__(self, inputs, compute_function):
+        self._compute_function = compute_function
+        self._inputs = inputs
+        self._callbacks = []
+        self._current_value = None
+        self.changed(None)
+        for i in inputs:
+            i.add_callback(self.changed)
+
+    @property
+    def value(self):
+        return self._compute_function([i.value for i in self._inputs])
+    
+    def changed(self, _):
+        if self.value != self._current_value:
+            self._current_value = self.value
+            for c in self._callbacks:
+                c(self.value)
 
     def add_callback(self, callback):
-        for child in self.inputs:
-            child.callbacks.append(callback)
-
-        self.callbacks.append(callback)
+        self._callbacks.append(callback)
 
     def remove_callback(self, callback):
-        # self.compute_function
-        ...
-
-    def __getattr__(self, attr):
-        return super().__getattr__(self, attr)
-
-    def __getattribute__(self, attr):
-        if attr == "value":
-            new_value = self.compute_functions(self.inputs)
-            setattr(self, attr, new_value)
-            if self.callbacks:
-                for child in self.inputs:
-                    for cb in child.callbacks:
-                        cb(new_value)
-            return super().__getattribute__(attr)
-        return super().__getattribute__(attr)
-
-    def __add__(self, other):
-        if isinstance(other, (InputCell, ComputeCell)):
-            return self.value + other.value
-        elif isinstance(other, (int, float)):
-            return self.value + other
-
-    def __radd__(self, other):
-        return self.__add__(other)
-
-    def __mul__(self, other):
-        if isinstance(other, (InputCell, ComputeCell)):
-            return self.value * other.value
-        elif isinstance(other, (int, float)):
-            return self.value * other
-
-
-if __name__ == "__main__":
-
-    def callback_factory(observer):
-        def callback(observer, value):
-            observer.append(value)
-
-        return partial(callback, observer)
-
-    input = InputCell(1)
-    output = ComputeCell(
-        [
-            input,
-        ],
-        lambda inputs: inputs[0] + 1,
-    )
-
-    cb1_observer = []
-    callback1 = callback_factory(cb1_observer)
-    output.add_callback(callback1)
-    print(cb1_observer, "Here")
-    input.value = 3
-    print(input.value)
-    print(cb1_observer)
+        if callback in self._callbacks:
+            self._callbacks.remove(callback)

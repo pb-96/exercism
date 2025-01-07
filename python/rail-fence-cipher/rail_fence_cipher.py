@@ -83,7 +83,3 @@ def decode(encoded_message, rails):
         
     return "".join(original_message)
 
-if __name__ == "__main__":
-    test = "TEITELHDVLSNHDTISEIIEA"
-    expected = "THEDEVILISINTHEDETAILS"
-    print(decode(test, 3))

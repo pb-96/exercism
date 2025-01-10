@@ -1,5 +1,6 @@
 from typing import List
 
+
 def apply_encoding(message, rails):
     encoded = []
     for _ in range(rails):
@@ -24,6 +25,7 @@ def apply_encoding(message, rails):
 
         pointer = (row, col + 1)
     return encoded
+
 
 def encode(message: str, rails: int):
     encoded = apply_encoding(message, rails)
@@ -55,7 +57,7 @@ def decode(encoded_message, rails):
     chunked_message: List[List[str]] = []
     start = 0
     for index in chars_per_line:
-        given_line = list(encoded_message[start: start + index])
+        given_line = list(encoded_message[start : start + index])
         chunked_message.append(given_line)
         start += index
 
@@ -75,11 +77,10 @@ def decode(encoded_message, rails):
             down = False
         elif start == 0:
             down = True
-        
+
         if down:
             start += 1
         else:
-            start -=1 
-        
-    return "".join(original_message)
+            start -= 1
 
+    return "".join(original_message)

@@ -21,8 +21,11 @@ class CreateSpiral:
             next_row = row + directions[current_direction][0]
             next_col = col + directions[current_direction][1]
 
-            if (0 <= next_row < self.size and 0 <= next_col < self.size 
-                and self.output[next_row][next_col] == 0):
+            if (
+                0 <= next_row < self.size
+                and 0 <= next_col < self.size
+                and self.output[next_row][next_col] == 0
+            ):
                 row, col = next_row, next_col
             else:
                 current_direction = (current_direction + 1) % 4

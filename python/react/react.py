@@ -30,7 +30,7 @@ class ComputeCell:
     @property
     def value(self):
         return self._compute_function([i.value for i in self._inputs])
-    
+
     def changed(self, _):
         if self.value != self._current_value:
             self._current_value = self.value

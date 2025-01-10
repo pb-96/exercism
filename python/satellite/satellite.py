@@ -24,9 +24,9 @@ def tree_from_traversals(pre_order: List[str], in_order: List[str]) -> Dict[str,
             in_order=in_order[:adjacent_index],
         ),
         "r": tree_from_traversals(
-            pre_order=pre_order[adjacent_index + 1: ],
-            in_order=in_order[adjacent_index + 1: ]
-        )
+            pre_order=pre_order[adjacent_index + 1 :],
+            in_order=in_order[adjacent_index + 1 :],
+        ),
     }
 
 

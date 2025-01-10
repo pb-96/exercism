@@ -14,6 +14,7 @@ def encode(numbers: List[bytes]) -> List[bytes]:
         ret += collect[::-1]
     return ret
 
+
 def decode(bytes_):
     numbers = []
     collect = 0
@@ -29,4 +30,3 @@ def decode(bytes_):
     if byte & 0x80:
         raise ValueError("incomplete sequence")
     return numbers
-

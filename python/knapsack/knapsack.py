@@ -15,13 +15,19 @@ def maximum_value(maximum_weight: int, items: List[Dict[str, int]]):
 
     for row in subsets:
         curr_weight, curr_val = 0, 0
+        skip = False
         d: Dict
+        
         for d in row:
             weight, value = d.get("weight"), d.get("value")
             curr_weight += weight
             curr_val += value
 
-        if curr_weight > maximum_weight:
+            if curr_weight > maximum_weight:
+                skip = not skip
+                break
+            
+        if skip:
             continue
 
         if curr_val > max_value:

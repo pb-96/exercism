@@ -17,7 +17,7 @@ def maximum_value(maximum_weight: int, items: List[Dict[str, int]]):
         curr_weight, curr_val = 0, 0
         skip = False
         d: Dict
-        
+
         for d in row:
             weight, value = d.get("weight"), d.get("value")
             curr_weight += weight
@@ -26,7 +26,7 @@ def maximum_value(maximum_weight: int, items: List[Dict[str, int]]):
             if curr_weight > maximum_weight:
                 skip = not skip
                 break
-            
+
         if skip:
             continue
 
@@ -34,14 +34,3 @@ def maximum_value(maximum_weight: int, items: List[Dict[str, int]]):
             max_value = curr_val
 
     return max_value
-
-
-if __name__ == "__main__":
-    items = [
-        {"weight": 2, "value": 5},
-        {"weight": 2, "value": 5},
-        {"weight": 2, "value": 5},
-        {"weight": 2, "value": 5},
-        {"weight": 10, "value": 21},
-    ]
-    print(maximum_value(10, items))

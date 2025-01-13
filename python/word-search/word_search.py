@@ -60,7 +60,7 @@ class WordSearch:
         next_point: Point,
         potential_positions: Tuple[int, int],
         search_word: str,
-        ptr: int
+        ptr: int,
     ) -> Union[Point, None]:
         built = search_word[ptr]
         while ptr < len(search_word) - 1:
@@ -77,11 +77,12 @@ class WordSearch:
         for potential_positions in self.search_points:
             next_char, next_point = self.peek_next(start_p, potential_positions)
             if next_char == search_word[0]:
-                found = self.non_rec_dfs(next_point, potential_positions, search_word, 0)
+                found = self.non_rec_dfs(
+                    next_point, potential_positions, search_word, 0
+                )
                 if found:
                     return found
         return None
-
 
     def search(self, word: str) -> Union[Tuple[Point, Point], None]:
         start_from = word[0]
@@ -93,29 +94,3 @@ class WordSearch:
                     found = self.dfs(p, rem)
                     if found is not None:
                         return (p, found)
-
-
-if __name__ == "__main__":
-    puzzle = WordSearch(
-        [
-            "jefblpepre",
-            "camdcimgtc",
-            "oivokprjsm",
-            "pbwasqroua",
-            "rixilelhrs",
-            "wolcqlirpc",
-            "screeaumgr",
-            "alxhpburyi",
-            "jalaycalmp",
-            "clojurermt",
-        ]
-    )
-    print(puzzle.search("clojure"), (Point(0, 9), Point(6, 9)))
-    print(puzzle.search("elixir"), (Point(5, 4), Point(0, 4)))
-    print(puzzle.search("ecmascript"), (Point(9, 0), Point(9, 9)))
-    print(puzzle.search("rust"), (Point(8, 4), Point(8, 1)))
-    print(puzzle.search("java"), (Point(0, 0), Point(3, 3)))
-    print(puzzle.search("lua"), (Point(7, 8), Point(5, 6)))
-    print(puzzle.search("lisp"), (Point(2, 5), Point(5, 2)))
-    print(puzzle.search("ruby"), (Point(7, 5), Point(4, 8)))
-    print(puzzle.search("haskell"))

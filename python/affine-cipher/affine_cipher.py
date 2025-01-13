@@ -31,24 +31,24 @@ def decode(ciphered_text: str, a: int, b: int) -> str:
     return joined
 
 
-def apply_decipher(a: int, b: int, char: str, m = 26) -> str:
+def apply_decipher(a: int, b: int, char: str, m=26) -> str:
     if char.isdigit():
         return char
-    
-    for mmi in range(0, m):
-        if (a * mmi) % m == 1:
+
+    for rotated in range(0, m):
+        if (a * rotated) % m == 1:
             break
 
     y = ord(char) - 97
-    return chr(mmi * (y - b) % m + 97)
+    return chr(rotated * (y - b) % m + 97)
 
 
-def apply_cipher(a: int, b: int, char: str, m = 26) -> str:
+def apply_cipher(a: int, b: int, char: str, m=26) -> str:
     if char.isdigit():
         return char
 
     x = ord(char) - 97
-    rel = (a * x + b) % 26 + 97
+    rel = (a * x + b) % m + 97
     return chr(rel)
 
 
@@ -64,4 +64,3 @@ def slide_window(strs: str, window: int = 5) -> str:
         pointer = to
 
     return " ".join(windows).strip()
-

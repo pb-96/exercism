@@ -1,36 +1,18 @@
 from typing import List, Dict
-from itertools import chain, combinations
+from itertools import combinations
 
+def gen_combos(items: List[Dict[str, int]]):
+    n = len(items)
+    for r in range(1, n + 1):
+        for combo in combinations(range(n), r):
+            yield list(dict.fromkeys(combo))
 
-def all_subsets(ss):
-    return chain(*map(lambda x: combinations(ss, x), range(0, len(ss) + 1)))
-
-
-def maximum_value(maximum_weight: int, items: List[Dict[str, int]]):
-    if not items or len(items) <= 1:
-        return 0
-
-    subsets = all_subsets(items)
-    max_value = 0
-
-    for row in subsets:
-        curr_weight, curr_val = 0, 0
-        skip = False
-        d: Dict
-
-        for d in row:
-            weight, value = d.get("weight"), d.get("value")
-            curr_weight += weight
-            curr_val += value
-
-            if curr_weight > maximum_weight:
-                skip = not skip
-                break
-
-        if skip:
-            continue
-
-        if curr_val > max_value:
-            max_value = curr_val
-
-    return max_value
+def maximum_value(maximum_value: int, items: Dict[str, int]) -> int:
+    max_val = 0
+    for combo in gen_combos(items):
+        this_combo = [items[idx] for idx in combo]
+        this_weight = sum((d["weight"] for d in this_combo))
+        this_value = sum((d["value"] for d in this_combo))
+        if this_weight <= maximum_value and this_value > max_val:
+            max_val = this_value
+    return max_val

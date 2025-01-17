@@ -1,18 +1,15 @@
-from typing import List, Dict
-from itertools import combinations
+from typing import List, TypedDict
 
-def gen_combos(items: List[Dict[str, int]]):
-    n = len(items)
-    for r in range(1, n + 1):
-        for combo in combinations(range(n), r):
-            yield list(dict.fromkeys(combo))
 
-def maximum_value(maximum_value: int, items: Dict[str, int]) -> int:
-    max_val = 0
-    for combo in gen_combos(items):
-        this_combo = [items[idx] for idx in combo]
-        this_weight = sum((d["weight"] for d in this_combo))
-        this_value = sum((d["value"] for d in this_combo))
-        if this_weight <= maximum_value and this_value > max_val:
-            max_val = this_value
-    return max_val
+class Item(TypedDict):
+    weight: int
+    value: int
+
+
+def maximum_value(max_weight: int, items: List[Item]) -> int:
+    dp_ar = [0 for _ in range(max_weight + 1)]
+    for item in items:
+        weight, value = item["weight"], item["value"]
+        for w in reversed(range(weight, max_weight + 1)):
+            dp_ar[w] = max(dp_ar[w], dp_ar[w - weight] + value)
+    return dp_ar[max_weight]
